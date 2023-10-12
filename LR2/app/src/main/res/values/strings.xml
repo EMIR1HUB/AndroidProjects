@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">LR2</string>
+    <string-array name="moods">
+        <item>happy</item>
+        <item>sad</item>
+        <item>normal</item>
+        <!-- Добавьте другие настроения по вашему усмотрению -->
+    </string-array>
+</resources>

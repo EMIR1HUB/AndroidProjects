@@ -1,0 +1,8 @@
+<resources>
+    <array name="mood_images">
+        <item>@drawable/happy</item>
+        <item>@drawable/sad</item>
+        <item>@drawable/normal</item>
+        <!-- Укажите ресурсы для других настроений -->
+    </array>
+</resources>
