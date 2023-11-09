@@ -15,32 +15,6 @@ import visitka.emir.mychatgpt.ui.theme.MyChatGPTTheme
 class ImageGenerateActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MyChatGPTTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting4("Android")
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun Greeting4(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview4() {
-    MyChatGPTTheme {
-        Greeting4("Android")
+        setContentView(R.layout.activity_image_generate)
     }
 }
