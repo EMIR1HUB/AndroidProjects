@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="4dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="10dp"
+        android:layout_gravity="end"
+        android:background="@drawable/bg_sender"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp"
+            android:textAlignment="textStart"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text="Сообщения Получателя"/>
+
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="12sp"
+            android:layout_gravity="end"
+            android:textColor="@color/white"
+            android:text="Ноя 22, 2023 6:00 PM"/>
+
+    </LinearLayout>
+
+</LinearLayout>

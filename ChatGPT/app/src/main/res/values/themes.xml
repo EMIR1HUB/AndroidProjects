@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Base.Theme.ChatGPT" parent="Theme.Material3.Light.NoActionBar" >
+        <item name="fontFamily">@font/ubuntu_mono_regular</item>
+        <item name="android:statusBarColor">@color/black</item>
+    </style>
+
+    <style name="Theme.ChatGPT" parent="Base.Theme.ChatGPT" />
+
+
+    <style name="MySplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/app_icon_chatgpt</item>
+        <item name="windowSplashScreenBackground">@color/mainBackgroundColor</item>
+        <item name="windowSplashScreenAnimationDuration">2000</item>
+        <item name="postSplashScreenTheme">@style/Theme.ChatGPT</item>
+    </style>
+</resources>
