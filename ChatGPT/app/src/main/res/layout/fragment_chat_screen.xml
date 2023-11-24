@@ -7,17 +7,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.ChatScreenFragment">
 
-    <include layout="@layout/toolbar_layout"/>
+    <include
+        android:id="@+id/toolbarlayout"
+        layout="@layout/toolbar_layout"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@id/rlSend"
+        android:layout_below="@id/toolbarlayout"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
-        android:paddingTop="?actionBarSize"
-        android:layout_above="@id/rlSend"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:reverseLayout="true"
+        app:stackFromEnd="true"
+        />
 
     <RelativeLayout
         android:id="@+id/rlSend"

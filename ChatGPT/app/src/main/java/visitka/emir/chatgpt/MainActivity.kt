@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
                         snackbar.dismiss()
                     }
                 }
-
                 else -> {
                     snackbar.show()
                 }

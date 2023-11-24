@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginVertical="4dp"
-    android:layout_marginEnd="24dp"
     android:layout_marginStart="10dp"
-    android:background="@drawable/bg_receiver">
+    android:layout_marginEnd="24dp"
+    android:background="@drawable/bg_receiver"
+    android:orientation="vertical">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/typingLAV"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="10dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/typing_animation"
+        />
     
     <TextView
         android:id="@+id/txtMessage"
@@ -15,6 +28,7 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="10dp"
         android:textAlignment="textStart"
+        android:visibility="gone"
         android:textStyle="bold"
         android:text="Сообщения Получателя"
         android:textColor="@color/white"
@@ -27,6 +41,7 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginBottom="10dp"
         android:textAlignment="textStart"
+        android:visibility="gone"
         android:textSize="12sp"
         android:textColor="@color/white"
         android:text="Ноя 22, 2023 6:00 PM"

@@ -4,16 +4,18 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import visitka.emir.chatgpt.models.Chat
+import visitka.emir.chatgpt.repository.ChatRepository
 
-class ChatViewModel(application : Application) : AndroidViewModel(application){
- var chatList = MutableLiveData<List<Chat>>(arrayListOf())
-     private set
+class ChatViewModel(application : Application) : AndroidViewModel(application) {
 
-    fun insertChat(chat: Chat){
-        val modifiedChatList = ArrayList<Chat>().apply {
-            addAll(chatList.value!!)
-        }
-        modifiedChatList.add(chat)
-        chatList.postValue(modifiedChatList)
+    private val chatRepository = ChatRepository(application)
+    val chatStateFlow get() = chatRepository.chatStateFlow
+
+    fun createChatCompletion(message: String) {
+        chatRepository.createChatCompletion(message)
+    }
+
+    fun getChatList() {
+        chatRepository.getChatList()
     }
 }

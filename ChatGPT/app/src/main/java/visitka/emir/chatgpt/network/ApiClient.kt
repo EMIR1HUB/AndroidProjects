@@ -7,17 +7,17 @@ import visitka.emir.chatgpt.utils.BASE_URL
 object ApiClient {
 
     @Volatile
-    private var INSTACE : ApiInterface? = null
+    private var INSTANCE: ApiInterface? = null
 
     fun getInstance() : ApiInterface{
         synchronized(this){
-            return INSTACE?: Retrofit.Builder()
+            return INSTANCE ?: Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ApiInterface::class.java)
                 .also {
-                    INSTACE = it
+                    INSTANCE = it
                 }
         }
     }

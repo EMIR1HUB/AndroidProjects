@@ -10,6 +10,11 @@ import android.view.View
 import android.widget.Toast
 import android.view.inputmethod.InputMethodManager
 
+enum class Status{
+    LOADING,
+    SUCCESS,
+    ERROR
+}
 enum class NetworkStatus{
     Available,Unavailable
 }
