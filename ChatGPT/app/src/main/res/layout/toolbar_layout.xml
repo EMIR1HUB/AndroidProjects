@@ -41,7 +41,7 @@
         android:layout_toEndOf="@id/robotImageLL"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:text="Имя Бота"
+        android:text="Имя Робота"
         android:textStyle="bold"/>
 
 </RelativeLayout>

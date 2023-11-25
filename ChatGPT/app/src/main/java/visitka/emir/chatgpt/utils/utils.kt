@@ -9,7 +9,18 @@ import android.content.ClipboardManager
 import android.view.View
 import android.widget.Toast
 import android.view.inputmethod.InputMethodManager
+import visitka.emir.chatgpt.R
 
+val robotImageList = listOf(
+    R.drawable.robot_1,
+    R.drawable.robot_2,
+    R.drawable.robot_3,
+    R.drawable.robot_4,
+    R.drawable.robot_5,
+    R.drawable.robot_6,
+    R.drawable.robot_7,
+    R.drawable.robot_8,
+)
 enum class Status{
     LOADING,
     SUCCESS,
@@ -17,6 +28,10 @@ enum class Status{
 }
 enum class NetworkStatus{
     Available,Unavailable
+}
+
+enum class StatusResult{
+    Added
 }
 
 fun View.visible(){

@@ -7,16 +7,19 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import visitka.emir.chatgpt.converters.TypeConverter
 import visitka.emir.chatgpt.dao.ChatDAO
+import visitka.emir.chatgpt.dao.RobotDAO
 import visitka.emir.chatgpt.models.Chat
+import visitka.emir.chatgpt.models.Robot
 
 @Database(
-    entities = [Chat::class],
+    entities = [Chat::class, Robot::class],
     version = 1,
     exportSchema = false
 )
 @TypeConverters(TypeConverter::class)
 abstract class ChatGPTDatabase : RoomDatabase() {
     abstract val chatDao: ChatDAO
+    abstract val robotDao: RobotDAO
 
     companion object{
         @Volatile
