@@ -3,16 +3,17 @@
 
     <item android:id="@+id/copyMenu"
         android:icon="@drawable/ic_copy"
-        android:title="Копировать"
-        />
+        android:title="Копировать" />
 
     <item android:id="@+id/selectTxtMenu"
         android:icon="@drawable/ic_select_all"
-        android:title="Выбрать Текст"
-        />
+        android:title="Выбрать Текст" />
+
+    <item android:id="@+id/textToVoiceMenu"
+        android:icon="@drawable/ic_volume"
+        android:title="Текст в Голосовое" />
 
     <item android:id="@+id/shareTxtMenu"
         android:icon="@drawable/ic_share"
-        android:title="Поделиться"
-        />
+        android:title="Поделиться" />
 </menu>

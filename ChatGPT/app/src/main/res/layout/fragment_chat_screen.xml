@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainBackgroundColor"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.ChatScreenFragment">
 
     <include
@@ -29,15 +29,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginVertical="4dp"
         android:layout_centerHorizontal="true"
-        >
+        android:layout_marginVertical="4dp">
+        <ImageButton
+            android:id="@+id/voiceToTextBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_edittext"
+            android:src="@drawable/ic_voice"/>
+
         <EditText
             android:id="@+id/edMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_toStartOf="@id/sendImage"
+            android:layout_toEndOf="@id/voiceToTextBtn"
+            android:layout_toStartOf="@id/sendImageBtn"
             android:background="@drawable/bg_edittext"
             android:hint="Сообщение"
             android:inputType="textMultiLine"
@@ -51,7 +61,7 @@
             android:textSize="16sp"/>   
 
         <ImageButton
-            android:id="@+id/sendImage"
+            android:id="@+id/sendImageBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentEnd="true"
