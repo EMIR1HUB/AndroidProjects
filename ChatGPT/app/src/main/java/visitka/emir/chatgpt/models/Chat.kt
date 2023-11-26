@@ -22,5 +22,6 @@ data class Chat(
     val chatId: String,
     @Embedded
     val message: Message,
+    val robotId: String,
     val date: Date
 )

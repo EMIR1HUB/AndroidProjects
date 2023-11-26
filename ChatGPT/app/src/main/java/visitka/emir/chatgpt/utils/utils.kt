@@ -31,7 +31,9 @@ enum class NetworkStatus{
 }
 
 enum class StatusResult{
-    Added
+    Added,
+    Update,
+    Deleted
 }
 
 fun View.visible(){

@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         val snackbar = Snackbar.make(
             findViewById(android.R.id.content),
-            "No Internet Connection",
+            "Нет интернет соединения",
             Snackbar.LENGTH_INDEFINITE
         ).setAction("Wifi") {
             startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))

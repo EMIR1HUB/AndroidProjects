@@ -102,6 +102,5 @@ class ChatAdapter(
         override fun areContentsTheSame(oldItem: Chat, newItem: Chat): Boolean {
             return oldItem == newItem
         }
-
     }
 }

@@ -11,11 +11,11 @@ import java.util.Date
 @Dao
 interface ChatDAO {
 
-    @Query("SELECT * FROM Chat ORDER BY date DESC")
-    fun getChatList(): Flow<List<Chat>>
+    @Query("SELECT * FROM Chat WHERE robotId == :robotId ORDER BY date DESC")
+    fun getChatList(robotId: String): Flow<List<Chat>>
 
-    @Query("SELECT * FROM Chat ORDER BY date DESC LIMIT 5")
-    fun getChatListWitchOutFlow(): List<Chat>
+    @Query("SELECT * FROM Chat WHERE robotId == :robotId ORDER BY date DESC LIMIT 5")
+    fun getChatListWitchOutFlow(robotId: String): List<Chat>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChat(chat: Chat): Long

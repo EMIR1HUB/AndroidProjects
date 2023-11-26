@@ -6,10 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.PopupMenu
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +24,7 @@ import visitka.emir.chatgpt.utils.Status
 import visitka.emir.chatgpt.utils.copyToClipBoard
 import visitka.emir.chatgpt.utils.hideKeyBoard
 import visitka.emir.chatgpt.utils.longToastShow
+import visitka.emir.chatgpt.utils.robotImageList
 import visitka.emir.chatgpt.utils.shareMsg
 import visitka.emir.chatgpt.viewModels.ChatViewModel
 
@@ -28,10 +32,11 @@ import visitka.emir.chatgpt.viewModels.ChatViewModel
 class ChatScreenFragment : Fragment() {
 
 
-
     private val chatViewModel: ChatViewModel by lazy {
         ViewModelProvider(this)[ChatViewModel::class.java]
     }
+
+    private val chatArgs: ChatScreenFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,6 +44,20 @@ class ChatScreenFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_chat_screen, container, false)
+
+        val toolbarView = view.findViewById<View>(R.id.toolbarlayout)
+
+        val closeImage = toolbarView.findViewById<ImageView>(R.id.backImg)
+        val robotImage = toolbarView.findViewById<ImageView>(R.id.robotImage)
+        robotImage.setImageResource(robotImageList[chatArgs.robotImg])
+
+        closeImage.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        val titleTxt = toolbarView.findViewById<TextView>(R.id.titleTxt)
+        titleTxt.text = chatArgs.robotName
+
 
         val chatRV = view.findViewById<RecyclerView>(R.id.chatRV)
         val chatAdapter = ChatAdapter() { message, textView ->
@@ -104,7 +123,10 @@ class ChatScreenFragment : Fragment() {
         sendImageBtn.setOnClickListener {
             view.context.hideKeyBoard(it)
             if (edMessage.text.toString().trim().isNotEmpty()) {
-                chatViewModel.createChatCompletion(edMessage.text.toString().trim())
+                chatViewModel.createChatCompletion(
+                    edMessage.text.toString().trim(),
+                    chatArgs.robotId
+                )
                 edMessage.text = null
             } else {
                 view.context.longToastShow("Требуется сообщение")
@@ -112,7 +134,7 @@ class ChatScreenFragment : Fragment() {
         }
 
         callGetChatList(chatRV, chatAdapter)
-        chatViewModel.getChatList()
+        chatViewModel.getChatList(chatArgs.robotId)
 
         return view
     }

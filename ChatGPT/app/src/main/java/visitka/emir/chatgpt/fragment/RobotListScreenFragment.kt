@@ -5,19 +5,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import visitka.emir.chatgpt.R
+import visitka.emir.chatgpt.adapters.RobotAdapter
 import visitka.emir.chatgpt.models.Robot
 import visitka.emir.chatgpt.utils.Status
 import visitka.emir.chatgpt.utils.StatusResult
@@ -61,40 +65,147 @@ class RobotListScreenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val addRobotFabBtn = view.findViewById<ExtendedFloatingActionButton>(R.id.addRobotFabBtn)
 
-        addRobotFabBtn.setOnClickListener{
+        addRobotFabBtn.setOnClickListener {
             addRobotDialog(it)
         }
 
-//        val action =
-//            RobotListScreenFragmentDirections
-//                .actionRobotListScreenFragmentToChatScreenFragment()
-//        findNavController().navigate(action)
+        val robotAdapter = RobotAdapter { type, position, robot ->
+            when (type) {
+                "delete" -> {
+                    robotViewModel.deleteRobotUsingId(robot.robotId)
+                }
 
+                "update" -> {
+                    updateRobotDialog(view, robot)
+                }
+
+                else -> {
+                    val action =
+                        RobotListScreenFragmentDirections
+                            .actionRobotListScreenFragmentToChatScreenFragment(
+                                robot.robotId,
+                                robot.robotImg,
+                                robot.robotName
+                            )
+                    findNavController().navigate(action)
+                }
+            }
+        }
+        val robotRv = view.findViewById<RecyclerView>(R.id.robotRV)
+        robotRv.adapter = robotAdapter
+        robotAdapter.registerAdapterDataObserver(object :
+            RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                robotRv.smoothScrollToPosition(positionStart)
+            }
+        })
+        callGetRobotList(robotAdapter, view)
+        robotViewModel.getRobotList()
         statusCallback(view)
     }
 
-    private fun statusCallback(view: View){
-        robotViewModel
-            .statusLiveData
-            .observe(viewLifecycleOwner){
-                when(it.status){
-                    Status.LOADING -> {}
-                    Status.SUCCESS -> {
-                        when(it.data as  StatusResult){
-                            StatusResult.Added -> {
-                                Log.d("Status Result", "Added")
+    private fun callGetRobotList(robotAdapter: RobotAdapter, view: View) {
+        CoroutineScope(Dispatchers.Main).launch {
+            robotViewModel
+                .robotStateFlow
+                .collectLatest {
+                    when (it.status) {
+                        Status.LOADING -> {}
+                        Status.SUCCESS -> {
+                            it.data?.collect { robotList ->
+                                robotAdapter.submitList(robotList)
                             }
                         }
-                        it.message?.let { it1 -> view.context.longToastShow(it1) }
+
+                        Status.ERROR -> {
+                            it.message?.let { it1 -> view.context.longToastShow(it1) }
+                        }
                     }
-                    Status.ERROR -> {
-                        it.message?.let { it1 -> view.context.longToastShow(it1) }
+                }
+        }
+    }
+
+    override fun onDestroyView(){
+        super.onDestroyView()
+        robotViewModel.clearStatusLiveDate()
+    }
+
+    private fun statusCallback(view: View) {
+        robotViewModel
+            .statusLiveData
+            .observe(viewLifecycleOwner) {
+                if (it != null) {
+                    when (it.status) {
+                        Status.LOADING -> {}
+                        Status.SUCCESS -> {
+                            when (it.data as StatusResult) {
+                                StatusResult.Added -> {
+                                    Log.d("StatusResult", "Added")
+                                }
+
+                                StatusResult.Update -> {
+                                    Log.d("StatusResult", "Update")
+                                }
+
+                                StatusResult.Deleted -> {
+                                    Log.d("StatusResult", "Deleted")
+                                }
+                            }
+                            it.message?.let { it1 -> view.context.longToastShow(it1) }
+                        }
+
+                        Status.ERROR -> {
+                            it.message?.let { it1 -> view.context.longToastShow(it1) }
+                        }
                     }
                 }
             }
     }
 
-    private fun addRobotDialog(view: View){
+    private fun updateRobotDialog(view: View, robot: Robot) {
+        val edRobotName = TextInputEditText(view.context)
+        edRobotName.hint = "Введите Имя Робота"
+        edRobotName.maxLines = 3
+
+        val textInputLayout = TextInputLayout(view.context)
+        val container = FrameLayout(view.context)
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        params.setMargins(50, 30, 50, 30)
+        textInputLayout.layoutParams = params
+
+        textInputLayout.addView(edRobotName)
+        container.addView(textInputLayout)
+
+        MaterialAlertDialogBuilder(view.context)
+            .setTitle("Обновить робота")
+            .setView(container)
+            .setCancelable(false)
+            .setPositiveButton("Обновить") { dialog, which ->
+                val robotName = edRobotName.text.toString().trim()
+                if (robotName.isNotEmpty()) {
+                    robotViewModel.updateRobot(
+                        Robot(
+                            robot.robotId,
+                            robotName,
+                            robot.robotImg
+                        )
+                    )
+
+                } else {
+                    view.context.longToastShow("Обязательный")
+                }
+            }
+            .setNegativeButton("Отменить", null)
+            .create()
+            .show()
+        edRobotName.setText(robot.robotName)
+    }
+
+    private fun addRobotDialog(view: View) {
         val edRobotName = TextInputEditText(view.context)
         edRobotName.hint = "Введите Имя Робота"
         edRobotName.maxLines = 3
@@ -122,7 +233,7 @@ class RobotListScreenFragment : Fragment() {
                         Robot(
                             UUID.randomUUID().toString(),
                             robotName,
-                            robotImageList.random()
+                            (robotImageList.indices).random()
                         )
                     )
 

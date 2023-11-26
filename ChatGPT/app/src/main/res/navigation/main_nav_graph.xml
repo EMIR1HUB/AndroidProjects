@@ -43,6 +43,15 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="robotId"
+            app:argType="string" />
+        <argument
+            android:name="robotImg"
+            app:argType="integer" />
+        <argument
+            android:name="robotName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/selectTextScreenFragment"
