@@ -10,7 +10,7 @@
 
 
     <style name="MySplash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenAnimatedIcon">@drawable/app_icon_chatgpt</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ai</item>
         <item name="windowSplashScreenBackground">@color/mainBackgroundColor</item>
         <item name="windowSplashScreenAnimationDuration">2000</item>
         <item name="postSplashScreenTheme">@style/Theme.ChatGPT</item>

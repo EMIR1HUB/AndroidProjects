@@ -29,10 +29,11 @@
                 android:id="@+id/cancelBtn"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:backgroundTint="@color/secondMainColor"
+                android:backgroundTint="@color/black"
                 android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:text="Отмена"
+                android:textColor="@color/white"
                 android:textSize="28sp" />
 
             <Button
@@ -41,8 +42,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:layout_weight="1"
-                android:backgroundTint="@color/black"
+                android:backgroundTint="@color/secondMainColor"
                 android:text="Скачать"
+                android:textColor="@color/black"
                 android:textSize="28sp" />
         </LinearLayout>
     </LinearLayout>
