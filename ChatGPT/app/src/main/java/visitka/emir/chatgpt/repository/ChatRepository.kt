@@ -20,8 +20,12 @@ import visitka.emir.chatgpt.models.Chat
 import visitka.emir.chatgpt.network.ApiClient
 import visitka.emir.chatgpt.responce.ChatRequest
 import visitka.emir.chatgpt.responce.ChatResponse
+import visitka.emir.chatgpt.responce.CreateImageRequest
+import visitka.emir.chatgpt.responce.Data
+import visitka.emir.chatgpt.responce.ImageResponse
 import visitka.emir.chatgpt.responce.Message
 import visitka.emir.chatgpt.utils.CHAT_GPT_MODEL
+import visitka.emir.chatgpt.utils.EncryptSharedPreferenceManager
 import visitka.emir.chatgpt.utils.Resource
 import visitka.emir.chatgpt.utils.longToastShow
 import java.util.Date
@@ -32,11 +36,18 @@ class ChatRepository(val application: Application) {
     private val chatDao = ChatGPTDatabase.getInstance(application).chatDao
     private val apiClient = ApiClient.getInstance()
 
+    private val encryptSharedPreferenceManager = EncryptSharedPreferenceManager(application)
     private val _chatStateFlow = MutableStateFlow<Resource<Flow<List<Chat>>>>(Resource.Loading())
     val chatStateFlow: StateFlow<Resource<Flow<List<Chat>>>>
         get() = _chatStateFlow
 
-    fun getChatList(robotId:String) {
+    private val _imageStateFlow = MutableStateFlow<Resource<ImageResponse>>(Resource.Success())
+    val imageStateFlow: StateFlow<Resource<ImageResponse>>
+        get() = _imageStateFlow
+
+    private val imageList = ArrayList<Data>()
+
+    fun getChatList(robotId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 _chatStateFlow.emit(Resource.Loading())
@@ -104,7 +115,10 @@ class ChatRepository(val application: Application) {
                     messageList,
                     CHAT_GPT_MODEL
                 )
-                apiClient.createChatCompletion(chatRequest)
+                apiClient.createChatCompletion(
+                    chatRequest,
+                    authorization = "Bearer ${encryptSharedPreferenceManager.openAPIKey}"
+                )
                     .enqueue(object : Callback<ChatResponse> {
                         override fun onResponse(
                             call: Call<ChatResponse>,
@@ -149,10 +163,55 @@ class ChatRepository(val application: Application) {
                 async { chatDao.deleteChatUsingChatId(receiverId) },
                 async { chatDao.deleteChatUsingChatId(senderId) }
             ).awaitAll()
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 application.longToastShow("Что-то пошло не так")
             }
 //            _chatStateFlow.emit(Resource.Error("Что-то пошло не так"))
+        }
+    }
+
+    fun createImage(body: CreateImageRequest) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                _imageStateFlow.emit(Resource.Loading())
+                apiClient.createImage(
+                    body,
+                    authorization = "Bearer ${encryptSharedPreferenceManager.openAPIKey}"
+                ).enqueue(object : Callback<ImageResponse> {
+                    override fun onResponse(
+                        call: Call<ImageResponse>,
+                        response: Response<ImageResponse>
+                    ) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val responseBody = response.body()
+                            if(responseBody != null){
+                                imageList.addAll(responseBody.data)
+                                val modifiedDataList = ArrayList<Data>().apply{
+                                    addAll(imageList)
+                                }
+                                val imageResponse = ImageResponse(
+                                    responseBody.created,
+                                    modifiedDataList
+                                )
+                                _imageStateFlow.emit(Resource.Success(imageResponse))
+                            }else{
+                                _imageStateFlow.emit(Resource.Success(null))
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ImageResponse>, t: Throwable) {
+                        t.printStackTrace()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            _imageStateFlow.emit(Resource.Error(t.message.toString()))
+                        }
+                    }
+
+                })
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _imageStateFlow.emit(Resource.Error(e.message.toString()))
+            }
         }
     }
 }

@@ -17,6 +17,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_welcomeScreenFragment_to_imageGenScreenFragment"
+            app:destination="@id/imageGenScreenFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/robotListScreenFragment"
@@ -62,4 +69,9 @@
             android:name="selectedMessage"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/imageGenScreenFragment"
+        android:name="visitka.emir.chatgpt.fragment.ImageGenScreenFragment"
+        android:label="fragment_image_gen_screen"
+        tools:layout="@layout/fragment_image_gen_screen" />
 </navigation>

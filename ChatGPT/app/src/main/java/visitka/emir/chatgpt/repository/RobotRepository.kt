@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import visitka.emir.chatgpt.database.ChatGPTDatabase
 import visitka.emir.chatgpt.models.Robot
+import visitka.emir.chatgpt.utils.EncryptSharedPreferenceManager
 import visitka.emir.chatgpt.utils.Resource
 import visitka.emir.chatgpt.utils.Resource.Error
 import visitka.emir.chatgpt.utils.Resource.Loading

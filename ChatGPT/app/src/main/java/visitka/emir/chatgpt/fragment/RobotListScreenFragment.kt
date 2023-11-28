@@ -23,11 +23,13 @@ import kotlinx.coroutines.launch
 import visitka.emir.chatgpt.R
 import visitka.emir.chatgpt.adapters.RobotAdapter
 import visitka.emir.chatgpt.models.Robot
+import visitka.emir.chatgpt.utils.EncryptSharedPreferenceManager
 import visitka.emir.chatgpt.utils.Status
 import visitka.emir.chatgpt.utils.StatusResult
 import visitka.emir.chatgpt.utils.gone
 import visitka.emir.chatgpt.utils.longToastShow
 import visitka.emir.chatgpt.utils.robotImageList
+import visitka.emir.chatgpt.utils.visible
 import visitka.emir.chatgpt.viewModels.RobotViewModel
 import java.util.UUID
 
@@ -44,65 +46,87 @@ class RobotListScreenFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_robot_list_screen, container, false)
+        try {
 
-        val toolbarView = view.findViewById<View>(R.id.toolbarlayout)
+            val toolbarView = view.findViewById<View>(R.id.toolbarlayout)
 
-        val robotImageLL = toolbarView.findViewById<View>(R.id.robotImageLL)
-        robotImageLL.gone()
+            val robotImageLL = toolbarView.findViewById<View>(R.id.robotImageLL)
+            robotImageLL.gone()
 
-        val closeImage = toolbarView.findViewById<ImageView>(R.id.backImg)
-        closeImage.setOnClickListener {
-            findNavController().navigateUp()
+            val closeImage = toolbarView.findViewById<ImageView>(R.id.backImg)
+            closeImage.setOnClickListener {
+                findNavController().navigateUp()
+            }
+
+            val titleTxt = toolbarView.findViewById<TextView>(R.id.titleTxt)
+            titleTxt.text = "ChatGPT Mobile"
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
-        val titleTxt = toolbarView.findViewById<TextView>(R.id.titleTxt)
-        titleTxt.text = "ChatGPT Mobile"
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val addRobotFabBtn = view.findViewById<ExtendedFloatingActionButton>(R.id.addRobotFabBtn)
+        try {
 
-        addRobotFabBtn.setOnClickListener {
-            addRobotDialog(it)
-        }
+            val settingImg =
+                view.findViewById<ImageView>(R.id.settingImg)
+            settingImg.visible()
+            val encryptSharedPreferenceManager = EncryptSharedPreferenceManager(view.context)
+            settingImg.setOnClickListener {
+                apiKeyDialog(it, encryptSharedPreferenceManager)
+            }
 
-        val robotAdapter = RobotAdapter { type, position, robot ->
-            when (type) {
-                "delete" -> {
-                    robotViewModel.deleteRobotUsingId(robot.robotId)
-                }
+            val addRobotFabBtn =
+                view.findViewById<ExtendedFloatingActionButton>(R.id.addRobotFabBtn)
 
-                "update" -> {
-                    updateRobotDialog(view, robot)
-                }
+            addRobotFabBtn.setOnClickListener {
+                addRobotDialog(it)
+            }
 
-                else -> {
-                    val action =
-                        RobotListScreenFragmentDirections
-                            .actionRobotListScreenFragmentToChatScreenFragment(
-                                robot.robotId,
-                                robot.robotImg,
-                                robot.robotName
-                            )
-                    findNavController().navigate(action)
+            val robotAdapter = RobotAdapter { type, position, robot ->
+                when (type) {
+                    "delete" -> {
+                        robotViewModel.deleteRobotUsingId(robot.robotId)
+                    }
+
+                    "update" -> {
+                        updateRobotDialog(view, robot)
+                    }
+
+                    else -> {
+                        if (encryptSharedPreferenceManager.openAPIKey.trim().isNotEmpty()) {
+                            val action =
+                                RobotListScreenFragmentDirections
+                                    .actionRobotListScreenFragmentToChatScreenFragment(
+                                        robot.robotId,
+                                        robot.robotImg,
+                                        robot.robotName
+                                    )
+                            findNavController().navigate(action)
+                        } else {
+                            view.context.longToastShow("Введите Api ключ в настройках")
+                        }
+                    }
                 }
             }
+            val robotRv = view.findViewById<RecyclerView>(R.id.robotRV)
+            robotRv.adapter = robotAdapter
+            robotAdapter.registerAdapterDataObserver(object :
+                RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    super.onItemRangeInserted(positionStart, itemCount)
+                    robotRv.smoothScrollToPosition(positionStart)
+                }
+            })
+            callGetRobotList(robotAdapter, view)
+            robotViewModel.getRobotList()
+            statusCallback(view)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        val robotRv = view.findViewById<RecyclerView>(R.id.robotRV)
-        robotRv.adapter = robotAdapter
-        robotAdapter.registerAdapterDataObserver(object :
-            RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                super.onItemRangeInserted(positionStart, itemCount)
-                robotRv.smoothScrollToPosition(positionStart)
-            }
-        })
-        callGetRobotList(robotAdapter, view)
-        robotViewModel.getRobotList()
-        statusCallback(view)
     }
 
     private fun callGetRobotList(robotAdapter: RobotAdapter, view: View) {
@@ -228,7 +252,7 @@ class RobotListScreenFragment : Fragment() {
             .setCancelable(false)
             .setPositiveButton("Добавить"){dialog, which ->
                 val robotName = edRobotName.text.toString().trim()
-                if(robotName.isNotEmpty()){
+                if (robotName.isNotEmpty()) {
                     robotViewModel.insertRobot(
                         Robot(
                             UUID.randomUUID().toString(),
@@ -237,7 +261,7 @@ class RobotListScreenFragment : Fragment() {
                         )
                     )
 
-                }else{
+                } else {
                     view.context.longToastShow("Обязательный")
                 }
             }
@@ -247,4 +271,40 @@ class RobotListScreenFragment : Fragment() {
 
     }
 
+    private fun apiKeyDialog( view: View, encryptSharedPreferenceManager: EncryptSharedPreferenceManager ) {
+        val edApiKey = TextInputEditText(view.context)
+        edApiKey.hint = "Введите Api Ключ"
+        edApiKey.maxLines = 3
+
+        val textInputLayout = TextInputLayout(view.context)
+        val container = FrameLayout(view.context)
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        params.setMargins(50, 30, 50, 30)
+        textInputLayout.layoutParams = params
+
+        textInputLayout.addView(edApiKey)
+        container.addView(textInputLayout)
+
+        MaterialAlertDialogBuilder(view.context)
+            .setTitle("Open API Ключ")
+            .setView(container)
+            .setCancelable(false)
+            .setPositiveButton("Обновить") { dialog, which ->
+                val apiKey = edApiKey.text.toString().trim()
+                if (apiKey.isNotEmpty()) {
+                    encryptSharedPreferenceManager.openAPIKey = apiKey
+                } else {
+                    view.context.longToastShow("Обязательный")
+                }
+            }
+            .setNegativeButton("Отменить", null)
+            .create()
+            .show()
+        if (encryptSharedPreferenceManager.openAPIKey.trim().isNotEmpty()) {
+            edApiKey.setText(encryptSharedPreferenceManager.openAPIKey.trim())
+        }
+    }
 }

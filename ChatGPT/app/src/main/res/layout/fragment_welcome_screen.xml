@@ -34,6 +34,7 @@
     <com.airbnb.lottie.LottieAnimationView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/typeLL"
         android:layout_below="@id/descrTxt"
         android:layout_centerHorizontal="true"
         android:layout_margin="16dp"
@@ -41,17 +42,32 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/robot_animation" />
 
-    <Button
-        android:id="@+id/continueBtn"
+    <LinearLayout
+        android:id="@+id/typeLL"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/black"
-        android:text="Продолжить"
-        android:textSize="28sp" />
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/chatBtn"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:backgroundTint="@color/black"
+            android:text="Чат"
+            android:textSize="28sp" />
+
+        <Button
+            android:id="@+id/generateImgBtn"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:backgroundTint="@color/black"
+            android:text="Генерация Изображений"
+            android:textSize="28sp" />
+    </LinearLayout>
 
 
 </RelativeLayout>
